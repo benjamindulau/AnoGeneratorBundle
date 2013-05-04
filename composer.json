@@ -1,0 +1,20 @@
+{
+    "name":         "ano/generator-bundle",
+    "description":  "Code generation bundle",
+    "keywords":     ["generator", "generation", "code generator"],
+    "type":         "symfony-bundle",
+    "license":      "MIT",
+    "authors": [
+        {
+            "name":     "Benjamin Dulau",
+            "email":    "benjamin.dulau@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/framework-bundle": "2.*"
+    },
+    "autoload": {
+        "psr-0": { "Ano\\GeneratorBundle": "" }
+    },
+    "target-dir": "Ano/GeneratorBundle"
+}
