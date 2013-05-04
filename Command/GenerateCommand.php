@@ -114,7 +114,15 @@ class GenerateCommand extends ContainerAwareCommand
         $bundleNames = array_keys($this->getContainer()->get('kernel')->getBundles());
         $objectPath = null;
         while (true) {
-            $objectName = $dialog->askAndValidate($output, $dialog->getQuestion('The object shortcut name', null), array('Ano\GeneratorBundle\Command\Validators', 'validateObjectName'), false, null, $bundleNames);
+            $objectName = $dialog->askAndValidate(
+                $output,
+                $dialog->getQuestion('The object shortcut name (ie: <info>AcmeDemoBundle:Model/User</info>)', null),
+                array('Ano\GeneratorBundle\Command\Validators', 'validateObjectName'),
+                false,
+                null,
+                $bundleNames
+            );
+
             list($bundle, $objectName) = $this->parseShortcutNotation($objectName);
 
             try {
@@ -145,8 +153,8 @@ class GenerateCommand extends ContainerAwareCommand
             $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
             '',
             sprintf("You are going to generate a \"<info>%s</info>\" object", $this->objectPath),
-            sprintf('With the followings members:'),
-            var_export($this->members, true),
+            //sprintf('With the followings members:'),
+//            var_export($this->members, true),
             '',
         ));
     }
@@ -157,7 +165,6 @@ class GenerateCommand extends ContainerAwareCommand
         $output->writeln(array(
             '',
             'Instead of starting with a blank command, you can add some properties now.',
-            '',
         ));
 
         while (true) {
@@ -165,7 +172,7 @@ class GenerateCommand extends ContainerAwareCommand
             $self = $this;
 
             // member name
-            $name = $dialog->askAndValidate($output, $dialog->getQuestion('New member name (press <return> to stop adding members)', null), function ($name) use ($members, $self) {
+            $name = $dialog->askAndValidate($output, $dialog->getQuestion('New member name', null), function ($name) use ($members, $self) {
                 if (isset($members[$name])) {
                     throw new \InvalidArgumentException(sprintf('Member "%s" is already defined.', $name));
                 }
@@ -179,14 +186,14 @@ class GenerateCommand extends ContainerAwareCommand
             // member description
             $description = $dialog->ask(
                 $output,
-                $dialog->getQuestion('Member description', null)
+                $dialog->getQuestion(sprintf('<comment>%s</comment> member description', $name), null)
             );
 
             // member access level
             $defaultAccessLevel = $this->options['member']['defaults']['access_level'];
             $accessLevel = $dialog->ask(
                 $output,
-                $dialog->getQuestion('Member access level', $defaultAccessLevel),
+                $dialog->getQuestion(sprintf('<comment>%s</comment> member access level', $name), $defaultAccessLevel),
                 $defaultAccessLevel,
                 array(
                     'public',
@@ -199,7 +206,7 @@ class GenerateCommand extends ContainerAwareCommand
             $defaultType = $this->options['member']['defaults']['type'];
             $type = $dialog->ask(
                 $output,
-                $dialog->getQuestion('Member type', $defaultType),
+                $dialog->getQuestion(sprintf('<comment>%s</comment> member type', $name), $defaultType),
                 $defaultType,
                 array(
                     'string',
@@ -295,9 +302,9 @@ class GenerateCommand extends ContainerAwareCommand
             'member' => array(
                 'defaults' => array(
                     'type' => 'string',
-                    'access_level' => 'public',
-                    'getter' => false,
-                    'setter' => false,
+                    'access_level' => 'private',
+                    'getter' => true,
+                    'setter' => true,
                 )
             )
         );

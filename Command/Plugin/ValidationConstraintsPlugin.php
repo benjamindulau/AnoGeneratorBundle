@@ -39,13 +39,23 @@ class ValidationConstraintsPlugin implements PluginInterface
         $availableConstraints = array_keys($this->constraints);
         $constraints = array();
         while (true) {
-            $constraintName = $dialog->askAndValidate($output, $dialog->getQuestion('New member validation constraints (press <return> to stop adding constraints)', null), function ($constraintName) use ($availableConstraints) {
-                if (!empty($constraintName) && !in_array($constraintName, $availableConstraints)) {
-                    throw new \InvalidArgumentException(sprintf('Constraint "%s" is not available.', $constraintName));
-                }
+            $constraintName = $dialog->askAndValidate(
+                $output,
+                $dialog->getQuestion(
+                    sprintf('New constraint for <comment>%s</comment> member', $member['name']),
+                    null
+                ),
+                function ($constraintName) use ($availableConstraints) {
+                    if (!empty($constraintName) && !in_array($constraintName, $availableConstraints)) {
+                        throw new \InvalidArgumentException(sprintf('Constraint "%s" is not available.', $constraintName));
+                    }
 
-                return $constraintName;
-            }, false, null, $availableConstraints);
+                    return $constraintName;
+                },
+                false,
+                null,
+                $availableConstraints
+            );
 
             if (!$constraintName) {
                 break;
